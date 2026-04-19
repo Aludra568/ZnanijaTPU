@@ -1,0 +1,221 @@
+/* --- Существующие стили (с небольшими адаптациями для SPA) --- */
+* {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  position: relative;
+  background: linear-gradient(135deg, rgba(36, 46, 77, 0.9), rgba(137, 126, 121, 0.9));
+  font-family: Open Sans, Arial, sans-serif;
+  font-size: 16px;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+body:before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0;
+  height: 100%; width: 100%;
+  background-image: url(data:image/png;base64,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);
+  opacity: .3;
+  z-index: -1;
+}
+
+/* Контейнеры экранов */
+.view-container {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+.view-container.active {
+  display: flex;
+}
+
+/* Центрирование для экрана логина */
+#view-auth {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Стили формы логина (твои) */
+.login-form {
+  width: 90%;
+  padding: 2em;
+  position: relative;
+  border-radius: 8px;
+  border: 1px solid #b12816;
+  box-shadow: 0px 7px 16px -3px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to right, #016f1d 0%, #1ab31a 29%, #7deb8b 50%, #118b3e 71%, #016f1d 100%);
+}
+@media screen and (min-width: 600px) {
+  .login-form { width: 50vw; max-width: 25em; }
+}
+.flex-row { margin-bottom: 1em; }
+.lf--input {
+  width: 100%; padding: 1em 1.5em; border: 0; box-sizing: border-box;
+  color: #fff; font-size: 1rem; border-radius: 25px;
+  background: linear-gradient(to bottom, #bc3220 0%, #fa5846 100%);
+  outline: none; transition: transform .15s ease;
+}
+.lf--input::placeholder { color: #f0f0f0; }
+.lf--input:focus { transform: scale(1.02); }
+.lf--submit {
+  display: block; width: 100%; padding: 1em; border: 0; border-radius: 30px;
+  color: #fff; margin-top: 30px; cursor: pointer; font-size: 1rem; font-weight: bold;
+  background: linear-gradient(to bottom, #ffbf00 0%, #fa9f17 100%);
+  box-shadow: 0px 7px 16px -3px rgba(0, 0, 0, 0.5);
+  transition: transform .15s ease; text-shadow: -1px -1px #b86200;
+}
+.lf--submit:focus, .lf--submit:hover { transform: scale(1.02); }
+
+/* --- Новые стили для SPA (Главный экран) --- */
+#view-app {
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Шапка сайта */
+.app-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  height: 70px; /* Увеличили высоту, чтобы логотип влез */
+  background: rgba(1, 111, 29, 0.95);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Адаптивность для мобилок */
+@media screen and (max-width: 600px) {
+  .logo-text {
+    display: none; /* Скрываем текст слева на маленьких экранах, чтобы не мешал */
+  }
+  .header-logo-img {
+    height: 50px;
+  }
+}
+
+.logo-text { font-size: 1.5rem; font-weight: bold; text-shadow: 1px 1px 2px #000; }
+.user-controls { display: flex; align-items: center; gap: 15px; }
+
+.app-content {
+  padding: 30px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  flex-grow: 1;
+}
+
+h2 { font-size: 1.8rem; margin-bottom: 20px; font-weight: bold; border-bottom: 2px solid #ffbf00; padding-bottom: 10px; }
+h3 { font-size: 1.4rem; margin-bottom: 15px; font-weight: bold; }
+
+/* Общие кнопки */
+.btn {
+  padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;
+  font-size: 0.9rem; font-weight: bold; color: #fff; transition: transform 0.2s;
+  background: rgba(255,255,255,0.2);
+}
+.btn:hover { transform: scale(1.05); }
+.btn-small { padding: 5px 15px; font-size: 0.8rem; }
+.btn-primary { background: linear-gradient(to bottom, #ffbf00 0%, #fa9f17 100%); text-shadow: -1px -1px #b86200; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+.btn-submit { background: linear-gradient(to bottom, #1ab31a 0%, #016f1d 100%); margin-top: 10px; }
+.btn-back { background: transparent; border: 1px solid #ffbf00; color: #ffbf00; margin-bottom: 20px; }
+
+/* Формы ввода внутри приложения */
+.modern-input {
+  width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: none;
+  background: rgba(255,255,255,0.9); color: #333; font-family: inherit; font-size: 1rem;
+}
+.modern-input:focus { outline: 2px solid #ffbf00; }
+
+/* Карточки */
+.card {
+  background: rgba(36, 46, 77, 0.8); border-radius: 10px; padding: 20px;
+  margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Меню предметов (Аккордеон) */
+.subject-item { margin-bottom: 10px; }
+.subject-header {
+  background: linear-gradient(to right, #bc3220, #fa5846); padding: 15px 20px;
+  border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 1.2rem;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2); transition: filter 0.2s;
+}
+.subject-header:hover { filter: brightness(1.1); }
+.programs-list {
+  display: none; padding: 10px 0 10px 20px; border-left: 3px solid #ffbf00; margin-top: 5px;
+}
+.program-item {
+  padding: 10px; background: rgba(0,0,0,0.2); margin-bottom: 5px; border-radius: 5px;
+  cursor: pointer; transition: background 0.2s;
+}
+.program-item:hover { background: rgba(255,255,255,0.1); color: #ffbf00; }
+
+/* Список вопросов */
+.question-card { cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+.question-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-color: #ffbf00; }
+.q-title { font-size: 1.3rem; color: #ffbf00; margin-bottom: 8px; font-weight: bold; }
+.q-meta { font-size: 0.8rem; color: #bbb; margin-top: 15px; display: flex; justify-content: space-between; }
+
+/* Детали вопроса и ответы */
+.question-detail { border-left: 4px solid #ffbf00; }
+.answer-card { background: rgba(255,255,255,0.05); border-left: 4px solid #1ab31a; }
+.answer-text { line-height: 1.5; margin-bottom: 10px; }
+.answer-img { max-width: 100%; border-radius: 5px; margin-top: 10px; max-height: 300px; object-fit: contain; }
+
+.file-upload-wrapper { margin-bottom: 15px; font-size: 0.9rem; }
+.file-upload-wrapper input { margin-top: 5px; display: block; }
+
+/* Шапка сайта */
+.app-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  height: 70px; 
+  background: rgba(1, 111, 29, 0.95);
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+/* Контейнер для точного центрирования */
+.header-center-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Единый стиль для логотипа */
+.main-header-logo {
+  height: 70px !important; 
+  width: auto !important;
+  max-width: none !important;
+  display: block;
+  filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Адаптивность: просто уменьшаем высоту на мобильных */
+@media screen and (max-width: 600px) {
+  .logo-text { display: none; }
+  .main-header-logo { height: 35px !important; }
+  .app-header { padding: 0 15px; }
+}

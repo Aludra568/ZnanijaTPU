@@ -1,32 +1,96 @@
 <!DOCTYPE html>
-<html >
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Login Form</title>
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Znanija TPU</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-
-  
-      <link rel="stylesheet" href="css/style.css">
-
-  
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <form class='login-form'>
-    <div class="flex-row logo">
-    <img src="C:\Users\NikitaK\Documents\Учеба\help_tpu\ZnanijaTPU\resources\ТПУ лого черный11.png" alt="Логотип" class="logo-img">
+
+  <div id="view-auth" class="view-container active">
+    <form class='login-form' id="login-form">
+      <div class="flex-row logo">
+        <h1 style="color: white; font-size: 2rem; font-weight: bold; text-align: center; text-shadow: 1px 1px 2px black;">ZNANIA TPU</h1>
+      </div>
+      <div class="flex-row">
+        <input id="username" class='lf--input' placeholder='Имя пользователя' type='text' required>
+      </div>
+      <div class="flex-row">
+        <input id="password" class='lf--input' placeholder='Пароль' type='password' required>
+      </div>
+      <input class='lf--submit' type='submit' value='Войти / Зарегистрироваться'>
+    </form>
   </div>
-  <div class="flex-row">
-    <input id="username" class='lf--input' placeholder='Имя пользователя' type='text'>
+
+  <div id="view-app" class="view-container" style="display: none;">
+    <header class="app-header">
+      <div class="logo-text">Znanija TPU</div>
+      <div class="header-center-logo">
+    <img src="C:\Users\NikitaK\Documents\Учеба\help_tpu\ZnanijaTPU\resources\logo_black.png" alt="Логотип" class="main-header-logo">
   </div>
-  <div class="flex-row">
-    <input id="password" class='lf--input' placeholder='Пароль' type='password'>
+      <div class="user-controls">
+        <span id="current-username"></span>
+        <button id="btn-logout" class="btn btn-small">Выйти</button>
+      </div>
+    </header>
+
+    <main class="app-content">
+      <section id="menu-section" class="section-block active">
+        <h2>Выберите предмет</h2>
+        <div id="subjects-container" class="subjects-list"></div>
+      </section>
+
+      <section id="questions-section" class="section-block" style="display: none;">
+        <div class="section-header">
+          <button class="btn btn-back" onclick="showSection('menu-section')">← Назад к предметам</button>
+          <h2 id="current-program-title">Программа</h2>
+        </div>
+        
+        <div class="actions-panel">
+          <button id="btn-show-add-question" class="btn btn-primary">Задать новый вопрос</button>
+        </div>
+
+        <div id="add-question-form" class="card" style="display: none; margin-bottom: 20px;">
+          <h3>Новый вопрос</h3>
+          <input type="text" id="new-q-title" class="modern-input" placeholder="Краткий заголовок вопроса" required>
+          <textarea id="new-q-text" class="modern-input" placeholder="Подробно опишите вашу проблему..." rows="4" required></textarea>
+          <button id="btn-submit-question" class="btn btn-submit">Опубликовать</button>
+          <button onclick="document.getElementById('add-question-form').style.display='none'" class="btn">Отмена</button>
+        </div>
+
+        <div id="questions-list" class="questions-list">
+          </div>
+      </section>
+
+      <section id="detail-section" class="section-block" style="display: none;">
+        <div class="section-header">
+          <button class="btn btn-back" onclick="showSection('questions-section')">← Назад к списку вопросов</button>
+        </div>
+        
+        <div id="question-detail-card" class="card question-detail">
+          </div>
+
+        <div class="answers-container">
+          <h3>Ответы (<span id="answers-count">0</span>)</h3>
+          <div id="answers-list">
+            </div>
+        </div>
+
+        <div class="card add-answer-card">
+          <h3>Добавить ответ</h3>
+          <textarea id="new-a-text" class="modern-input" placeholder="Напишите ваш ответ..." rows="4"></textarea>
+          <div class="file-upload-wrapper">
+            <label for="new-a-file">Прикрепить файл (изображение):</label>
+            <input type="file" id="new-a-file" accept="image/*">
+          </div>
+          <button id="btn-submit-answer" class="btn btn-submit">Отправить ответ</button>
+        </div>
+      </section>
+    </main>
   </div>
-  <input class='lf--submit' type='submit' value='Зарегестрироваться'>
-  <a class='lf--forgot' href='#'>Уже зарегестрирован? Войти</a>
-</form>
-  
-  
+
+  <script src="script.js"></script>
 </body>
 </html>
