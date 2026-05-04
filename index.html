@@ -1,96 +1,126 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Znanija TPU</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учебная платформа TPU</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-  <div id="view-auth" class="view-container active">
-    <form class='login-form' id="login-form">
-      <div class="flex-row logo">
-        <h1 style="color: white; font-size: 2rem; font-weight: bold; text-align: center; text-shadow: 1px 1px 2px black;">ZNANIA TPU</h1>
-      </div>
-      <div class="flex-row">
-        <input id="username" class='lf--input' placeholder='Имя пользователя' type='text' required>
-      </div>
-      <div class="flex-row">
-        <input id="password" class='lf--input' placeholder='Пароль' type='password' required>
-      </div>
-      <input class='lf--submit' type='submit' value='Войти / Зарегистрироваться'>
-    </form>
-  </div>
-
-  <div id="view-app" class="view-container" style="display: none;">
-    <header class="app-header">
-      <div class="logo-text">Znanija TPU</div>
-      <div class="header-center-logo">
-    <img src="C:\Users\NikitaK\Documents\Учеба\help_tpu\ZnanijaTPU\resources\logo_black.png" alt="Логотип" class="main-header-logo">
-  </div>
-      <div class="user-controls">
-        <span id="current-username"></span>
-        <button id="btn-logout" class="btn btn-small">Выйти</button>
-      </div>
-    </header>
-
-    <main class="app-content">
-      <section id="menu-section" class="section-block active">
-        <h2>Выберите предмет</h2>
-        <div id="subjects-container" class="subjects-list"></div>
-      </section>
-
-      <section id="questions-section" class="section-block" style="display: none;">
-        <div class="section-header">
-          <button class="btn btn-back" onclick="showSection('menu-section')">← Назад к предметам</button>
-          <h2 id="current-program-title">Программа</h2>
+    <div id="view-auth" class="auth-container">
+        <div class="auth-card">
+            <img src="C:\Users\NikitaK\Desktop\Вёрстка\New logo help tpu.jpg" alt="Logo" class="auth-logo">
+            <h2>Вход в систему</h2>
+            <input type="text" id="login-username" placeholder="Имя пользователя">
+            <input type="password" id="login-password" placeholder="Пароль">
+            <button onclick="login()" class="btn-ask" style="width: 100%; margin-top: 15px;">Войти</button>
+            <p id="auth-error" class="error-text"></p>
         </div>
-        
-        <div class="actions-panel">
-          <button id="btn-show-add-question" class="btn btn-primary">Задать новый вопрос</button>
-        </div>
+    </div>
 
-        <div id="add-question-form" class="card" style="display: none; margin-bottom: 20px;">
-          <h3>Новый вопрос</h3>
-          <input type="text" id="new-q-title" class="modern-input" placeholder="Краткий заголовок вопроса" required>
-          <textarea id="new-q-text" class="modern-input" placeholder="Подробно опишите вашу проблему..." rows="4" required></textarea>
-          <button id="btn-submit-question" class="btn btn-submit">Опубликовать</button>
-          <button onclick="document.getElementById('add-question-form').style.display='none'" class="btn">Отмена</button>
-        </div>
-
-        <div id="questions-list" class="questions-list">
-          </div>
-      </section>
-
-      <section id="detail-section" class="section-block" style="display: none;">
-        <div class="section-header">
-          <button class="btn btn-back" onclick="showSection('questions-section')">← Назад к списку вопросов</button>
-        </div>
-        
-        <div id="question-detail-card" class="card question-detail">
-          </div>
-
-        <div class="answers-container">
-          <h3>Ответы (<span id="answers-count">0</span>)</h3>
-          <div id="answers-list">
+    <div id="view-app" style="display: none;">
+        <header class="navbar">
+            <div class="logo"><img src="C:\Users\NikitaK\Desktop\Вёрстка\New logo help tpu.jpg" alt="Logo"></div>
+            <div class="search-bar">
+                <i class="fa fa-search"></i>
+                <input type="text" id="search-input" placeholder="Поиск по вопросам..." oninput="searchQuestions()">
             </div>
-        </div>
+            <div class="user-actions">
+                <span id="display-username" style="font-weight: 600; color: #666;"></span>
+                <button class="btn-ask" onclick="toggleAddForm()">Задать вопрос</button>
+                <button class="btn-login" onclick="logout()">Выйти</button>
+            </div>
+        </header>
 
-        <div class="card add-answer-card">
-          <h3>Добавить ответ</h3>
-          <textarea id="new-a-text" class="modern-input" placeholder="Напишите ваш ответ..." rows="4"></textarea>
-          <div class="file-upload-wrapper">
-            <label for="new-a-file">Прикрепить файл (изображение):</label>
-            <input type="file" id="new-a-file" accept="image/*">
-          </div>
-          <button id="btn-submit-answer" class="btn btn-submit">Отправить ответ</button>
-        </div>
-      </section>
-    </main>
-  </div>
+        <div class="container">
+            <aside class="sidebar">
+                <nav>
+                    <ul id="subjects-list">
+                        <li class="active" onclick="filterBySubject('all')"><i class="fa fa-home"></i> Главная</li>
+                        
+                        <li class="has-submenu">
+                            <div onclick="toggleSubmenu('math-sub')"><i class="fa fa-calculator"></i> Математика</div>
+                            <ul id="math-sub" class="submenu">
+                                <li onclick="filterBySubject('Математика 1.3')">Математика 1.3</li>
+                                <li onclick="filterBySubject('Математика 2.1')">Математика 2.1</li>
+                                <li onclick="filterBySubject('Математика 2.6')">Математика 2.6</li>
+                            </ul>
+                        </li>
 
-  <script src="script.js"></script>
+                        <li class="has-submenu">
+                            <div onclick="toggleSubmenu('phys-sub')"><i class="fa fa-atom"></i> Физика</div>
+                            <ul id="phys-sub" class="submenu">
+                                <li onclick="filterBySubject('Физика 1.1')">Физика 1.1</li>
+                                <li onclick="filterBySubject('Физика 1.2')">Физика 1.2</li>
+                                <li onclick="filterBySubject('Механика')">Механика</li>
+                            </ul>
+                        </li>
+
+                        <li class="has-submenu">
+                            <div onclick="toggleSubmenu('prog-sub')"><i class="fa fa-code"></i> Программирование</div>
+                            <ul id="prog-sub" class="submenu">
+                                <li onclick="filterBySubject('Java')">Java</li>
+                                <li onclick="filterBySubject('Python')">Python</li>
+                                <li onclick="filterBySubject('C++')">C++</li>
+                            </ul>
+                        </li>
+
+                        <li onclick="filterBySubject('Начертательная геометрия')"><i class="fa fa-pencil-ruler"></i> Начерт. геометрия</li>
+                        <li onclick="filterBySubject('Химия')"><i class="fa fa-flask"></i> Химия</li>
+                        <li onclick="filterBySubject('История России')"><i class="fa fa-landmark"></i> История России</li>
+                        <li onclick="filterBySubject('Основы государственности')"><i class="fa fa-shield-halved"></i> Основы гос-ти</li>
+                        <li onclick="filterBySubject('Иностранный язык')"><i class="fa fa-language"></i> Иностранный язык</li>
+                        <li onclick="filterBySubject('Философия')"><i class="fa fa-brain"></i> Философия</li>
+                        <li onclick="filterBySubject('Экономика')"><i class="fa fa-chart-line"></i> Экономика</li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <div id="questions-section">
+                    <h2 id="section-title">Последние вопросы</h2>
+
+                    <div id="add-question-form" class="question-card" style="display: none; border: 2px solid #8a2be2;">
+                        <h3>Новый вопрос</h3>
+                        <select id="q-subject" class="modern-input"></select>
+                        <input type="text" id="q-title" class="modern-input" placeholder="Заголовок вопроса">
+                        <textarea id="q-text" class="modern-input" placeholder="Суть вопроса..." rows="4"></textarea>
+                        
+                        <div class="file-upload">
+                            <label for="q-file"><i class="fa fa-paperclip"></i> Прикрепить файл</label>
+                            <input type="file" id="q-file" hidden onchange="updateFileName('q-file-name', this)">
+                            <span id="q-file-name" class="file-name-display"></span>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button onclick="saveQuestion()" class="btn-ask">Опубликовать</button>
+                            <button onclick="toggleAddForm()" class="btn-login">Отмена</button>
+                        </div>
+                    </div>
+
+                    <div id="questions-list"></div>
+                </div>
+
+                <div id="detail-section" style="display: none;">
+                    <button class="btn-login" onclick="showMainSection()" style="margin-bottom: 20px;">← Назад</button>
+                    <div id="full-question-content"></div>
+                    <div id="answers-list"></div>
+                    <div class="question-card" style="margin-top: 20px;">
+                        <h4>Ваш ответ</h4>
+                        <textarea id="a-text" class="modern-input" placeholder="Напишите ответ..."></textarea>
+                        <div class="file-upload">
+                            <label for="a-file"><i class="fa fa-image"></i> Добавить решение</label>
+                            <input type="file" id="a-file" hidden onchange="updateFileName('a-file-name', this)">
+                            <span id="a-file-name" class="file-name-display"></span>
+                        </div>
+                        <button onclick="saveAnswer()" class="btn-ask" style="margin-top: 10px;">Отправить</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>

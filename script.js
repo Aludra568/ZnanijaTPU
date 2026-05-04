@@ -1,276 +1,261 @@
-// --- Инициализация начальных данных (Mock DB) ---
-const subjectsData = {
-    "Математика": ["Математика 1.3", "Математика 2.6", "Математика 3.8"],
-    "Физика": ["Физика 1.1", "Физика 2.2", "Физика 3.0"],
-    "Иностранные языки": ["Английский A2", "Английский B1", "Немецкий A1"],
-    "Информатика и программирование": ["Основы Python", "Алгоритмы и структуры данных", "Веб-разработка"],
-    "Начертательная геометрия": ["НГ 1 семестр", "НГ 2 семестр", "Инженерная графика"]
+// --- ИНИЦИАЛИЗАЦИЯ ДАННЫХ ---
+let questions = JSON.parse(localStorage.getItem('questions')) || [];
+let currentUser = localStorage.getItem('currentUser') || null;
+let currentQuestionId = null;
+let activeFilter = 'all';
+
+// Полный список дисциплин
+const allSubjects = [
+    "Математика 1.3", "Математика 2.1", "Математика 2.6",
+    "Физика 1.1", "Физика 1.2", "Механика",
+    "Java", "Python", "C++",
+    "Начертательная геометрия", "Химия", "История России", 
+    "Основы государственности", "Иностранный язык", "Философия", "Экономика"
+];
+
+window.onload = () => {
+    populateSubjectSelect();
+    if (currentUser) {
+        showApp();
+    }
 };
 
-// Заполняем localStorage тестовыми данными, если пусто
-if (!localStorage.getItem('questions')) {
-    const initialQuestions = [
-        {
-            id: 1,
-            subject: "Физика",
-            program: "Физика 1.1",
-            title: "Закон сохранения импульса",
-            text: "Не могу понять задачу про абсолютно неупругое столкновение двух шаров. Как найти конечную скорость?",
-            author: "Студент_ТПУ",
-            date: new Date().toLocaleDateString(),
-            answers: []
-        },
-        {
-            id: 2,
-            subject: "Математика",
-            program: "Математика 2.6",
-            title: "Взятие несобственного интеграла",
-            text: "Как доказать сходимость интеграла от 1 до бесконечности (sin x)/x dx?",
-            author: "MathLover",
-            date: new Date().toLocaleDateString(),
-            answers: [
-                { text: "Используй признак Дирихле. Синус имеет ограниченную первообразную, а 1/x монотонно стремится к нулю.", file: null, author: "Преподаватель", date: new Date().toLocaleDateString() }
-            ]
-        }
-    ];
-    localStorage.setItem('questions', JSON.stringify(initialQuestions));
-}
-
-// Текущее состояние
-let currentUser = localStorage.getItem('currentUser') || null;
-let currentProgram = null;
-let currentQuestionId = null;
-
-// --- Управление отображением (SPA Навигация) ---
-function showView(viewId) {
-    document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-    document.getElementById(viewId).classList.add('active');
-    document.getElementById(viewId).style.display = 'flex';
-    if(viewId === 'view-auth') {
-        document.getElementById('view-app').style.display = 'none';
-    } else {
-        document.getElementById('view-auth').style.display = 'none';
-    }
-}
-
-function showSection(sectionId) {
-    document.querySelectorAll('.section-block').forEach(el => el.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-}
-
-// --- Авторизация ---
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value.trim();
-    if (username) {
-        currentUser = username;
-        localStorage.setItem('currentUser', currentUser);
-        document.getElementById('current-username').textContent = currentUser;
-        renderSubjects();
-        showView('view-app');
-        showSection('menu-section');
-    }
-});
-
-document.getElementById('btn-logout').addEventListener('click', function() {
-    currentUser = null;
-    localStorage.removeItem('currentUser');
-    showView('view-auth');
-});
-
-// Проверка при загрузке
-window.addEventListener('DOMContentLoaded', () => {
-    if (currentUser) {
-        document.getElementById('current-username').textContent = currentUser;
-        renderSubjects();
-        showView('view-app');
-        showSection('menu-section');
-    }
-});
-
-// --- Рендер Меню Предметов ---
-function renderSubjects() {
-    const container = document.getElementById('subjects-container');
-    container.innerHTML = '';
-
-    for (const [subject, programs] of Object.entries(subjectsData)) {
-        const subjectDiv = document.createElement('div');
-        subjectDiv.className = 'subject-item';
-
-        const headerDiv = document.createElement('div');
-        headerDiv.className = 'subject-header';
-        headerDiv.textContent = subject;
-
-        const programsDiv = document.createElement('div');
-        programsDiv.className = 'programs-list';
-
-        programs.forEach(prog => {
-            const progDiv = document.createElement('div');
-            progDiv.className = 'program-item';
-            progDiv.textContent = prog;
-            progDiv.onclick = () => openProgram(subject, prog);
-            programsDiv.appendChild(progDiv);
+// Заполнение селектора в форме вопроса
+function populateSubjectSelect() {
+    const select = document.getElementById('q-subject');
+    if (select) {
+        select.innerHTML = ''; 
+        allSubjects.forEach(subject => {
+            const option = document.createElement('option');
+            option.value = subject;
+            option.innerText = subject;
+            select.appendChild(option);
         });
-
-        headerDiv.onclick = () => {
-            const isVisible = programsDiv.style.display === 'block';
-            document.querySelectorAll('.programs-list').forEach(el => el.style.display = 'none'); // Закрыть другие
-            programsDiv.style.display = isVisible ? 'none' : 'block';
-        };
-
-        subjectDiv.appendChild(headerDiv);
-        subjectDiv.appendChild(programsDiv);
-        container.appendChild(subjectDiv);
     }
 }
 
-// --- Открытие программы и рендер вопросов ---
-function openProgram(subject, program) {
-    currentProgram = { subject, program };
-    document.getElementById('current-program-title').textContent = program;
-    document.getElementById('add-question-form').style.display = 'none';
-    renderQuestions();
-    showSection('questions-section');
+// --- ФУНКЦИИ АВТОРИЗАЦИИ ---
+function login() {
+    const userField = document.getElementById('login-username');
+    if (!userField) return;
+
+    const user = userField.value;
+    if (user.trim().length > 2) {
+        currentUser = user.trim();
+        localStorage.setItem('currentUser', currentUser);
+        showApp();
+    } else {
+        const error = document.getElementById('auth-error');
+        if (error) error.innerText = "Введите имя (минимум 3 символа)";
+    }
 }
 
-function renderQuestions() {
-    const questions = JSON.parse(localStorage.getItem('questions')) || [];
-    const filtered = questions.filter(q => q.program === currentProgram.program);
-    const container = document.getElementById('questions-list');
-    container.innerHTML = '';
+function logout() {
+    localStorage.removeItem('currentUser');
+    location.reload();
+}
+
+function showApp() {
+    const viewAuth = document.getElementById('view-auth');
+    const viewApp = document.getElementById('view-app');
+    const displayUser = document.getElementById('display-username');
+
+    if (viewAuth) viewAuth.style.display = 'none';
+    if (viewApp) viewApp.style.display = 'block';
+    if (displayUser) displayUser.innerText = currentUser;
+    
+    renderQuestions();
+}
+
+// --- РАБОТА С ВОПРОСАМИ ---
+function renderQuestions(filter = activeFilter, search = '') {
+    activeFilter = filter;
+    const list = document.getElementById('questions-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    const filtered = questions.filter(q => {
+        const matchesSubject = filter === 'all' || q.subject === filter;
+        const matchesSearch = q.title.toLowerCase().includes(search.toLowerCase());
+        return matchesSubject && matchesSearch;
+    });
 
     if (filtered.length === 0) {
-        container.innerHTML = '<p style="color: #bbb;">Пока нет вопросов. Будьте первым!</p>';
+        list.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">Вопросов пока нет</p>';
         return;
     }
 
     filtered.forEach(q => {
-        const card = document.createElement('div');
-        card.className = 'card question-card';
-        card.onclick = () => openQuestion(q.id);
-        card.innerHTML = `
-            <div class="q-title">${q.title}</div>
-            <div>${q.text.length > 100 ? q.text.substring(0, 100) + '...' : q.text}</div>
-            <div class="q-meta">
-                <span>Автор: ${q.author} | ${q.date}</span>
-                <span>Ответов: ${q.answers.length}</span>
+        const hasFile = q.fileName ? ` | <i class="fa fa-paperclip"></i> ${q.fileName}` : '';
+        list.innerHTML += `
+            <div class="question-card" onclick="showQuestionDetail(${q.id})">
+                <div class="card-header">
+                    <span class="badge default-badge">${q.subject}</span>
+                    <span style="color:#999; font-size:0.8rem">${q.date}</span>
+                </div>
+                <h3>${q.title}</h3>
+                <p style="color:#666; margin: 10px 0;">${q.text.substring(0, 100)}...</p>
+                <div style="font-size:0.9rem; color:#888; border-top: 1px solid #f5f5f5; padding-top:10px;">
+                    <i class="fa fa-comment"></i> ${q.answers.length} ответов | Автор: ${q.author}${hasFile}
+                </div>
             </div>
         `;
-        container.appendChild(card);
     });
 }
 
-// --- Добавление вопроса ---
-document.getElementById('btn-show-add-question').addEventListener('click', () => {
-    document.getElementById('add-question-form').style.display = 'block';
-});
-
-document.getElementById('btn-submit-question').addEventListener('click', () => {
-    const title = document.getElementById('new-q-title').value.trim();
-    const text = document.getElementById('new-q-text').value.trim();
-    if (!title || !text) return alert('Заполните все поля!');
-
-    const questions = JSON.parse(localStorage.getItem('questions')) || [];
-    const newQuestion = {
-        id: Date.now(),
-        subject: currentProgram.subject,
-        program: currentProgram.program,
-        title: title,
-        text: text,
-        author: currentUser,
-        date: new Date().toLocaleDateString(),
-        answers: []
-    };
-    
-    questions.push(newQuestion);
-    localStorage.setItem('questions', JSON.stringify(questions));
-    
-    document.getElementById('new-q-title').value = '';
-    document.getElementById('new-q-text').value = '';
-    document.getElementById('add-question-form').style.display = 'none';
-    
-    renderQuestions();
-});
-
-// --- Открытие страницы конкретного вопроса ---
-function openQuestion(id) {
-    currentQuestionId = id;
-    const questions = JSON.parse(localStorage.getItem('questions')) || [];
-    const q = questions.find(x => x.id === id);
-    if(!q) return;
-
-    document.getElementById('question-detail-card').innerHTML = `
-        <h2 style="color: #ffbf00; border: none; padding: 0;">${q.title}</h2>
-        <p style="white-space: pre-wrap; font-size: 1.1rem;">${q.text}</p>
-        <div class="q-meta" style="margin-top: 20px;">
-            <span>Спросил: ${q.author}</span>
-            <span>${q.date}</span>
-        </div>
-    `;
-
-    renderAnswers(q.answers);
-    showSection('detail-section');
+// Функции для работы с формой и файлами
+function toggleAddForm() {
+    const form = document.getElementById('add-question-form');
+    if (form) form.style.display = form.style.display === 'none' ? 'block' : 'none';
 }
 
-function renderAnswers(answers) {
-    document.getElementById('answers-count').textContent = answers.length;
-    const container = document.getElementById('answers-list');
-    container.innerHTML = '';
-
-    if (answers.length === 0) {
-        container.innerHTML = '<p style="color: #bbb; margin-bottom: 20px;">Ответов пока нет.</p>';
-        return;
+function updateFileName(displayId, input) {
+    const display = document.getElementById(displayId);
+    if (display && input.files.length > 0) {
+        display.innerText = input.files[0].name;
     }
-
-    answers.forEach(a => {
-        const card = document.createElement('div');
-        card.className = 'card answer-card';
-        let imgHtml = a.file ? `<img src="${a.file}" class="answer-img" alt="Прикрепленный файл">` : '';
-        
-        card.innerHTML = `
-            <div class="answer-text" style="white-space: pre-wrap;">${a.text}</div>
-            ${imgHtml}
-            <div class="q-meta">
-                <span>Ответил: ${a.author}</span>
-                <span>${a.date}</span>
-            </div>
-        `;
-        container.appendChild(card);
-    });
 }
 
-// --- Добавление ответа ---
-document.getElementById('btn-submit-answer').addEventListener('click', () => {
-    const text = document.getElementById('new-a-text').value.trim();
-    const fileInput = document.getElementById('new-a-file');
-    
-    if (!text && fileInput.files.length === 0) return alert('Напишите текст или прикрепите фото!');
+function saveQuestion() {
+    const titleInput = document.getElementById('q-title');
+    const textInput = document.getElementById('q-text');
+    const subjInput = document.getElementById('q-subject');
+    const fileInput = document.getElementById('q-file');
 
-    const processAnswer = (fileData) => {
-        const questions = JSON.parse(localStorage.getItem('questions')) || [];
-        const qIndex = questions.findIndex(x => x.id === currentQuestionId);
-        
-        questions[qIndex].answers.push({
-            text: text,
-            file: fileData,
+    if (titleInput && textInput && titleInput.value && textInput.value) {
+        const newQ = {
+            id: Date.now(),
             author: currentUser,
-            date: new Date().toLocaleDateString()
-        });
+            subject: subjInput ? subjInput.value : "Общее",
+            title: titleInput.value,
+            text: textInput.value,
+            date: new Date().toLocaleDateString(),
+            fileName: (fileInput && fileInput.files.length > 0) ? fileInput.files[0].name : null,
+            answers: []
+        };
         
+        questions.unshift(newQ);
         localStorage.setItem('questions', JSON.stringify(questions));
         
-        document.getElementById('new-a-text').value = '';
-        fileInput.value = '';
-        renderAnswers(questions[qIndex].answers);
-    };
-
-    if (fileInput.files.length > 0) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            processAnswer(e.target.result); // Base64 string картинки
-        };
-        reader.readAsDataURL(fileInput.files[0]);
-    } else {
-        processAnswer(null);
+        // Очистка
+        titleInput.value = '';
+        textInput.value = '';
+        if (fileInput) fileInput.value = '';
+        const fileDisplay = document.getElementById('q-file-name');
+        if (fileDisplay) fileDisplay.innerText = '';
+        
+        toggleAddForm();
+        renderQuestions();
     }
-});
+}
+
+// --- ДЕТАЛИ И ОТВЕТЫ ---
+function showQuestionDetail(id) {
+    currentQuestionId = id;
+    const q = questions.find(q => q.id === id);
+    if (!q) return;
+    
+    const qSection = document.getElementById('questions-section');
+    const dSection = document.getElementById('detail-section');
+    const content = document.getElementById('full-question-content');
+
+    if (qSection) qSection.style.display = 'none';
+    if (dSection) dSection.style.display = 'block';
+    
+    const fileHtml = q.fileName ? `<div style="margin: 10px 0; color: #8a2be2;"><i class="fa fa-file-alt"></i> Файл: ${q.fileName}</div>` : '';
+    
+    if (content) {
+        content.innerHTML = `
+            <span class="badge default-badge">${q.subject}</span>
+            <h2 style="margin:10px 0">${q.title}</h2>
+            <p style="font-size:1.1rem; line-height:1.6">${q.text}</p>
+            ${fileHtml}
+            <p style="margin-top:15px; color:#888">Автор: ${q.author} (${q.date})</p>
+        `;
+    }
+    renderAnswers(q);
+}
+
+function renderAnswers(q) {
+    const list = document.getElementById('answers-list');
+    if (!list) return;
+
+    list.innerHTML = q.answers.length ? '<h4>Ответы:</h4>' : '<p style="color:#999">Ответов пока нет.</p>';
+    
+    q.answers.forEach(a => {
+        const aFile = a.fileName ? `<div style="color: #8a2be2; font-size: 0.8rem;"><i class="fa fa-paperclip"></i> ${a.fileName}</div>` : '';
+        list.innerHTML += `
+            <div class="question-card" style="background:#fcfaff; cursor:default; margin-top: 10px;">
+                <p>${a.text}</p>
+                ${aFile}
+                <small style="color:#888">Ответил: ${a.author} (${a.date})</small>
+            </div>
+        `;
+    });
+}
+
+function saveAnswer() {
+    const textInput = document.getElementById('a-text');
+    const fileInput = document.getElementById('a-file');
+    
+    if (textInput && textInput.value) {
+        const qIndex = questions.findIndex(q => q.id === currentQuestionId);
+        if (qIndex !== -1) {
+            questions[qIndex].answers.push({
+                author: currentUser,
+                text: textInput.value,
+                date: new Date().toLocaleDateString(),
+                fileName: (fileInput && fileInput.files.length > 0) ? fileInput.files[0].name : null
+            });
+            
+            localStorage.setItem('questions', JSON.stringify(questions));
+            textInput.value = '';
+            if (fileInput) fileInput.value = '';
+            const fileDisplay = document.getElementById('a-file-name');
+            if (fileDisplay) fileDisplay.innerText = '';
+            
+            renderAnswers(questions[qIndex]);
+        }
+    }
+}
+
+// --- НАВИГАЦИЯ ---
+function showMainSection() {
+    const qSection = document.getElementById('questions-section');
+    const dSection = document.getElementById('detail-section');
+    if (qSection) qSection.style.display = 'block';
+    if (dSection) dSection.style.display = 'none';
+    renderQuestions();
+}
+
+function filterBySubject(subject) {
+    const items = document.querySelectorAll('.sidebar li');
+    items.forEach(li => {
+        li.classList.remove('active');
+        li.classList.remove('active-sub');
+    });
+
+    // Безопасное получение элемента, по которому кликнули
+    const clickedElement = window.event ? window.event.currentTarget : null;
+    if (clickedElement) {
+        clickedElement.classList.add(subject === 'all' ? 'active' : 'active-sub');
+    }
+    
+    const title = document.getElementById('section-title');
+    if (title) title.innerText = subject === 'all' ? 'Последние вопросы' : subject;
+    
+    renderQuestions(subject);
+}
+
+function searchQuestions() {
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) renderQuestions(activeFilter, searchInput.value);
+}
+
+function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    if (!submenu) return;
+    const isVisible = submenu.style.display === 'block';
+    document.querySelectorAll('.submenu').forEach(el => el.style.display = 'none');
+    submenu.style.display = isVisible ? 'none' : 'block';
+}
