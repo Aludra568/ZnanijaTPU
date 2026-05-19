@@ -1,0 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>📝 Регистрация</h2>
+        
+        <form method="post" class="register-form">
+            {% csrf_token %}
+            
+            <!-- Блок ошибок -->
+            {% if form.errors %}
+                <div class="errors">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>⚠️ {{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Поля формы -->
+            <div class="form-group">
+                {{ form.username.label_tag }}
+                {{ form.username }}
+            </div>
+            <div class="form-group">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+            </div>
+            <div class="form-group">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+            </div>
+
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+
+        <p class="login-link">Уже есть аккаунт? <a href="/users/login/">Войти</a></p>
+    </div>
+</body>
+</html>
+
+
+<!-- users/templates/users/register.html
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зарегистрироваться</button>
+</form>
+<p>Уже есть аккаунт? <a href="/users/login/">Войти</a></p> -->

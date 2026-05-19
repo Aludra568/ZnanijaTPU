@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.6.0/css/all.css">
+</head>
+<body> 
+
+    <!-- Navbar с кнопками (всегда видимая) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="position: fixed; top: 0; right: 0; left: 300; z-index: 1000;">
+        <div class="container-fluid justify-content-end">
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <!-- Кнопка профиля -->
+                    <a href="{% url 'users:profile' %}" class="btn btn-success me-2">
+                        <i class="fa-solid fa-user"></i> {{ user.username }}
+                        <a href="{% url 'questions:create' %}"><li><button class="btn btn-info"><i class="fas fa-plus-circle"></i> Задать вопрос</li></a></button>
+
+                    </a>
+                    
+                    <!-- Форма выхода (обязательно POST) -->
+                    <form action="{% url 'users:logout' %}" method="post" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-sign-out-alt"></i> Выход
+                        </button>
+                    </form>
+                {% else %}
+                    <!-- Кнопки входа и регистрации -->
+                    <a href="{% url 'users:login' %}" class="btn btn-outline-primary me-2">
+                        <i class="fa-solid fa-sign-in-alt"></i> Вход
+                    </a>
+                    <a href="{% url 'users:register' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-user-plus"></i> Регистрация
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <aside>
+        <a href="{% url 'home' %}">
+            <img src="{% static 'main/img/logo_purple.jpg' %}" alt="Logo">
+        </a>
+        <span class="logo">ZnaniaTPU</span>
+        <h3><i class="fa-solid fa-compass me-2"></i>Навигация</h3>
+        <ul>
+            <a href="{% url 'home' %}"><li><i class="fa-solid fa-house"></i> Главная</li></a>
+            <!-- <a href="{% url 'about' %}"><li><i class="fa-solid fa-circle-info"></i> Про нас</li></a>
+            <a href="{% url 'contacts' %}"><li><i class="fa-brands fa-telegram"></i> Контакты</li></a> -->
+        </ul>
+        <!-- <h3><i class="fa-solid fa-compass me-2"></i>Предметы</h3> -->
+        <ul>
+            {% if categories %}
+                {% for cat in categories %}
+                <a href="{% url 'questions:category' cat.slug %}">
+                    <li>
+                        <i class="fa-solid fa-book me-2"></i>{{ cat.name }}
+                    </li>
+                </a>
+                {% endfor %}
+            {% endif %}    
+
+        </ul>
+    </aside>
+    <main>
+        {% block content %}
+        {% if not questions %}
+            <div>Вопросов нет</div> 
+        {% endif %}
+        
+        {% for question in questions %}  
+            <div>{{ question.title }}</div>
+        {% endfor %}
+        {% endblock %}
+    </main>
+</body>
+</html>
+
+
+
+
+
+
+
+
