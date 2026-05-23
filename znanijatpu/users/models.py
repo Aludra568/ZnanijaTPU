@@ -1,5 +1,21 @@
-# from django.db import models
+from django.db import models
+from django.utils import timezone
 
+class VerificationCode(models.Model):
+    email = models.EmailField(unique=True, verbose_name='Email')
+    code = models.CharField(max_length=6, verbose_name='Код')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
+
+    @property
+    def is_expired(self):
+        return (timezone.now() - self.created_at).total_seconds() > 600
+
+    class Meta:
+        verbose_name = 'Код подтверждения'
+        verbose_name_plural = 'Коды подтверждения'
+
+    def __str__(self):
+        return f'Код для {self.email}'
 # # Create your models here.
 # from django.contrib.auth.models import AbstractUser, BaseUserManager
 # from django.utils.html import strip_tags

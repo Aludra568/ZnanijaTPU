@@ -1,12 +1,12 @@
-from .models import Questions, Category, Answer
+from .models import Question, Subject, Subsubject, Answer
 from django import forms
 from django.forms import ModelForm, TextInput, DateTimeInput, Textarea, Select, ClearableFileInput
 from django.core.exceptions import ValidationError
 
-class QuestionsForm(ModelForm):
+class QuestionForm(ModelForm):
     class Meta:
-        model = Questions
-        fields = ['title', 'content', 'cat', 'image']
+        model = Question
+        fields = ['title', 'content', 'subsubject', 'image']
 
         widgets = {
             "title": TextInput(attrs={
@@ -18,7 +18,7 @@ class QuestionsForm(ModelForm):
                 'placeholder': 'Текст вопроса',
                 'row': 5
             }),
-            "cat": Select(attrs={
+            "subsubject": Select(attrs={
                 'class': 'form-control',
             }),
             "image": ClearableFileInput(attrs={
@@ -29,29 +29,30 @@ class QuestionsForm(ModelForm):
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
     #     # Подсказка в выпадающем списке
-    #     self.fields['cat'].empty_label = "Выберите категорию"
+    #     self.fields['subject'].empty_label = "Выберите категорию"
     #     # Сортировка категорий по имени (опционально)
-    #     self.fields['cat'].queryset = Category.objects.order_by('name')
+    #     self.fields['subject'].queryset = Subject.objects.order_by('name')
 
     # def __init__(self, *args, **kwargs):
     #     super().__init__(*args, **kwargs)
-    #     self.fields['cat'].empty_label = "Сначала выберите курс"
+    #     self.fields['subject'].empty_label = "Сначала выберите курс"
     #     # Изначально скрываем все предметы
-    #     self.fields['cat'].queryset = Category.objects.none()
+    #     self.fields['subject'].queryset = Subject.objects.none()
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['cat'].empty_label = "Сначала выберите курс"
+        self.fields['subsubject'].empty_label = "Выберите предметный курс"
+        self.fields['subsubject'].queryset = Subsubject.objects.order_by('name')
         
-        # ✅ ДИНАМИЧЕСКИЙ QUERYSET ДЛЯ ВАЛИДАЦИИ
-        if self.is_bound and 'course_id' in self.data:
-            try:
-                course_id = int(self.data.get('course_id'))
-                self.fields['cat'].queryset = Category.objects.filter(course_id=course_id)
-            except (ValueError, TypeError):
-                self.fields['cat'].queryset = Category.objects.none()
-        else:
-            # При обычной загрузке страницы список пуст
-            self.fields['cat'].queryset = Category.objects.none()
+        # # ✅ ДИНАМИЧЕСКИЙ QUERYSET ДЛЯ ВАЛИДАЦИИ
+        # if self.is_bound and 'course_id' in self.data:
+        #     try:
+        #         course_id = int(self.data.get('course_id'))
+        #         self.fields['subsubject'].queryset = Subject.objects.filter(course_id=course_id)
+        #     except (ValueError, TypeError):
+        #         self.fields['subsubject'].queryset = Subject.objects.none()
+        # else:
+        #     # При обычной загрузке страницы список пуст
+        #     self.fields['subsubject'].queryset = Subject.objects.none()
 
     def clean_image(self):
         image = self.cleaned_data.get('image')
@@ -74,7 +75,7 @@ class AnswerForm(ModelForm):
         model = Answer
         fields = ['content', "image"]  
         widgets = {
-            "text": Textarea(attrs={
+            "content": Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
                 'placeholder': 'Напишите ваш ответ здесь...', 

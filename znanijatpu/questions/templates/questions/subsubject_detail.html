@@ -1,0 +1,56 @@
+{% extends 'main/layout.html' %}
+{% block title %}{{ subsubject.name }} - ZnaniaTPU{% endblock %}
+
+{% block content %}
+<div class="container px-2 px-md-4 py-3">
+    <nav class="mb-3">
+        <a href="{% url 'home' %}" class="text-decoration-none"> Главная</a> / 
+        <a href="{% url 'questions:subject_detail' subsubject.subject.slug %}" class="text-decoration-none">
+            {{ subsubject.subject.name }}
+        </a> / 
+        <span class="text-muted">{{ subsubject.name }}</span>
+    </nav>
+
+    <h2 class="mb-4 fw-bold">📝 {{ subsubject.name }}</h2>
+
+    {% for question in questions %}
+        <div class="card mb-3 shadow-sm position-relative">
+            <div class="card-body">
+                <h5 class="card-title mb-2 text-break">
+                    <a href="{{ question.get_absolute_url }}" class="text-decoration-none text-dark stretched-link">
+                        {{ question.title }}
+                    </a>
+                </h5>
+                <p class="text-muted small">
+                    {{ question.content|truncatewords:20 }}
+                </p>
+                 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+                <!-- Лайки + Ответы -->
+                <div class="d-flex gap-3 align-items-center">
+                    <span class="stat-item like-btn position-relative" style="cursor: pointer; z-index: 10;"
+                        data-url="{% url 'questions:toggle_like' question.slug %}"
+                        data-liked="{% if request.user.is_authenticated and question.id in liked_ids %}true{% else %}false{% endif %}">
+                        <i class="{% if request.user.is_authenticated and question.id in liked_ids %}fa-solid{% else %}fa-regular{% endif %} fa-thumbs-up me-1"></i>
+                        <span class="likes-count">{{ question.likes_count|default:0 }}</span>
+                    </span>
+                    <span class="stat-item text-muted">
+                        <i class="fa-regular fa-comment me-1"></i> {{ question.answers_count|default:0 }}
+                    </span>
+                </div>
+                
+                <!-- Автор + время (переносится на новую строку, если не влезает) -->
+                <div class="d-flex align-items-center gap-2 text-nowrap">
+                    <small class="text-muted">👤 {{ question.author.username|default:"Аноним" }}</small>
+                    <small class="text-muted">⏱️ {{ question.time_create|timesince }} назад</small>
+                </div>
+            </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info text-center py-4">
+            В этом разделе пока нет вопросов.<br>
+            <a href="{% url 'questions:create' %}" class="btn btn-primary btn-sm mt-2">Задать первый вопрос</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

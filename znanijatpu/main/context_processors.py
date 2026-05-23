@@ -1,7 +1,5 @@
-from questions.models import Category  
+from questions.models import Subject
 
-def sidebar_data(request):
-    """Добавляет категории в каждый шаблон сайта"""
-    return {
-        'categories': Category.objects.all().order_by('name')
-    }
+def sidebar_context(request):
+    # Передаём предметы в контекст каждого шаблона
+    return {'subjects': Subject.objects.all().order_by('name')}

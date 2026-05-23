@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "main/layout.html" %}
 
 {% block content %}
 <div class="container mt-5">
@@ -30,7 +30,10 @@
             </form>
             
             <p class="mt-3 text-center">
-                Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a>
+                Нет аккаунта? <a href="{% url 'users:register' %}" class="text-muted small">Зарегистрироваться</a> 
+            </p>
+            <p class="mt-3 text-center">
+                <a href="{% url 'users:password_reset' %}" class="text-muted small">Забыли пароль?</a>
             </p>
         </div>
     </div>

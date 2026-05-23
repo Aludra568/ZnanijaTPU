@@ -1,52 +1,54 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="auth-container">
-        <h2>📝 Регистрация</h2>
-        
-        <form method="post" class="register-form">
-            {% csrf_token %}
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Регистрация</h2>
             
-            <!-- Блок ошибок -->
-            {% if form.errors %}
-                <div class="errors">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p>⚠️ {{ error }}</p>
-                        {% endfor %}
+            <form method="post" class="register-form">
+        {% csrf_token %}
+        
+        <!-- Блок ошибок -->
+        {% if form.errors %}
+            <div class="errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>⚠️ {{ error }}</p>
                     {% endfor %}
-                </div>
-            {% endif %}
-
-            <!-- Поля формы -->
-            <div class="form-group">
-                {{ form.username.label_tag }}
-                {{ form.username }}
+                {% endfor %}
             </div>
-            <div class="form-group">
-                {{ form.password1.label_tag }}
-                {{ form.password1 }}
-            </div>
-            <div class="form-group">
-                {{ form.password2.label_tag }}
-                {{ form.password2 }}
-            </div>
+        {% endif %}
 
-            <button type="submit">Зарегистрироваться</button>
-        </form>
+        <!-- Поля формы -->
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+        </div>
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+        </div>
 
-        <p class="login-link">Уже есть аккаунт? <a href="/users/login/">Войти</a></p>
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="fa-solid fa-sign-in-alt"></i> Зарегистрироваться
+        </button>
+
+    </form>
+            <p class="login-link">Уже есть аккаунт?</p><p><a href="/users/login/">Войти</a>
+            </p>
+        </div>
     </div>
-</body>
-</html>
-
+</div>
+{% endblock %}
 
 <!-- users/templates/users/register.html
 <form method="post">

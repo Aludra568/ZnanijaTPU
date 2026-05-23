@@ -8,7 +8,7 @@
     <!-- Блок вопроса -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <span class="badge bg-primary mb-2">{{ question.cat.name }}</span>
+            <span class="badge bg-primary mb-2">{{ question.subsubject.subject.name }}</span>
             <h1 class="mb-3">{{ question.title }}</h1>
             <div class="text-muted mb-3">
                 <small>Автор: {{ question.author.username }} • {{ question.time_create|date:"d.m.Y" }}</small>
@@ -18,6 +18,20 @@
             </div>
         </div>
     </div>
+
+    {% if question.image %}
+        <div class="mt-4">
+            <a href="{{ question.image.url }}" target="_blank">
+                <img src="{{ question.image.url }}" 
+                        alt="{{ question.title }}" 
+                        class="img-fluid rounded shadow-sm" 
+                        style="max-height: 500px; width: auto; object-fit: contain;">
+            </a>
+            <div class="form-text text-muted mt-1">
+                <small>Нажмите на изображение для увеличения</small>
+            </div>
+        </div>
+    {% endif %}
 
     <!-- Секция ответов -->
     <h3 class="mb-3">Ответы ({{ answers.count }})</h3>

@@ -1,114 +1,126 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .models import Questions, Category, Answer, Faculty, Program, Course
-from .forms import QuestionsForm, AnswerForm
+from .models import Question, Subject, Subsubject, Answer, Like
+from .forms import QuestionForm, AnswerForm
 from django.views.generic import DetailView, UpdateView, DeleteView
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
 from django.utils.text import slugify
-
+from pytils.translit import translify  # Для корректной кириллицы в slug
+from django.http import JsonResponse
+from django.urls import reverse_lazy
+from django.db.models import Count
 
 # Create your views here.
 def index(request):
     return render(request, 'questions/index.html')
 
-# def show_question(request, question_id):
-#     return HttpResponse(f'<h1>id: {question_id} </h1>')
-
 def news_home(request):
-    questions = Questions.objects.all() #получение значений из данной таблицы
+    questions = Question.objects.all()
     return render(request, 'questions/questions_home.html', {'questions': questions})
 
-
-# class NewDetailView(DetailView):
-#     model = Questions
-#     template_name = 'questions/question_detail.html'
-#     context_object_name = 'question'
-#     slug_url_kwarg = 'question_slug'
-
-
 class NewUpdateView(UpdateView):
-    model = Questions
+    model = Question
     template_name = 'questions/create.html'
-
-    form_class = QuestionsForm
-
+    form_class = QuestionForm
 
 class NewDeleteView(DeleteView):
-    model = Questions
-    success_url = '/questions/'
+    model = Question
+    success_url = reverse_lazy('questions:questions_home')  # ← надёжнее
     template_name = 'questions/news-delete.html'
 
 @login_required
 def create(request):
-    # error = ''
     if request.method == "POST":
-        form = QuestionsForm(request.POST, request.FILES)
+        form = QuestionForm(request.POST, request.FILES)
         if form.is_valid():
             question = form.save(commit=False)
             question.author = request.user
-                        
-            # if not question.slug and question.title:
-            #     slug = slugify(question.title)
-            #     if not slug:
-            #         slug = f"vopros-{question.id}"  
-            #     question.slug = slug
             
+            # Генерация slug с поддержкой кириллицы
+            if not question.slug and question.title:
+                question.slug = slugify(translify(question.title)) or f"q-{question.id}"
+                
             question.save()
-            return redirect('/')
+            return redirect('home')  # Используем имя URL, а не '/'
     else:
-            # error = 'Форма была неверной'
-        form = QuestionsForm()
-
-    # data = {
-    #     'form': form,
-    #     'error': error
-    # }
+        form = QuestionForm()
 
     return render(request, 'questions/create.html', {
         'form': form,
-        'faculties': Faculty.objects.all(),
-        })
-
+        'subjects': Subject.objects.all(),  # Передаём предметы для формы
+    })
 
 def home(request):
-    questions = Questions.objects.filter(is_published=True
-        ).select_related('cat', 'author').order_by('-time_create')
-      # только опубликованные
-    # categories = Category.objects.all()  # все категории
+    # ✅ ИСПРАВЛЕНО: cat → subsubject
+    questions = Question.objects.filter(is_published=True) \
+        .select_related('subsubject__subject', 'author') \
+        .order_by('-time_create')
     
-    return render(request, 'main/index.html', {  # ← правильный путь к шаблону
+    return render(request, 'main/index.html', {
         'questions': questions,
-        # 'categories': categories,  # ← передаём в шаблон
     })
 
 def category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
+    subject = get_object_or_404(Subject, slug=cat_slug)
     
-    questions = Questions.objects.filter(cat=category, is_published=True)
+    # ✅ ИСПРАВЛЕНО: фильтрация через подпредмет
+    questions = Question.objects.filter(
+        subsubject__subject=subject, 
+        is_published=True
+    ).select_related('author', 'subsubject')
 
-    categories = Category.objects.all()
+    subjects = Subject.objects.all()
     
-    return render(request, 'main/category.html', {  # ← создай этот шаблон
+    return render(request, 'main/category.html', {
         'questions': questions,
-        'category': category,
-        'categories': categories,  
+        'category': subject,
+        'categories': subjects,  
+    })
+
+def subject_detail(request, subject_slug):
+    """Показывает список подпредметов выбранного предмета"""
+    subject = get_object_or_404(Subject, slug=subject_slug)
+    subsubjects = subject.subsubjects.all()  # related_name='subsubjects' из модели
+    
+    return render(request, 'questions/subject_detail.html', {
+        'subject': subject,
+        'subsubjects': subsubjects,
+    })
+
+def subsubject_detail(request, subsubject_slug):
+    subsubject = get_object_or_404(Subsubject, slug=subsubject_slug)
+    
+    liked_ids = set()
+    if request.user.is_authenticated:
+        liked_ids = set(Like.objects.filter(user=request.user).values_list('question_id', flat=True))
+
+    questions = Question.objects.filter(
+        subsubject=subsubject, 
+        is_published=True
+    ).select_related('author').annotate(
+        likes_count=Count('likes'),
+        answers_count=Count('answers')  # ← ДОБАВЛЕНО
+    ).order_by('-time_create')
+    
+    return render(request, 'questions/subsubject_detail.html', {
+        'subsubject': subsubject,
+        'questions': questions,
+        'liked_ids': liked_ids,
     })
 
 def question_detail(request, question_slug):
-    question = get_object_or_404(Questions, slug=question_slug)
+    question = get_object_or_404(Question, slug=question_slug)
     answers = Answer.objects.filter(question=question, is_published=True)
-    # Обработка формы ответа
+    
     if request.method == 'POST':
         if request.user.is_authenticated:  
-        
             form = AnswerForm(request.POST, request.FILES)
             if form.is_valid():
                 answer = form.save(commit=False)
                 answer.question = question
                 answer.author = request.user
                 answer.save()
-                return redirect('questions:question', question_slug=question.slug)  # Перезагрузка страницы
+                return redirect('questions:question', question_slug=question.slug)
         else:
             return redirect('users:login')  
     else:
@@ -121,58 +133,24 @@ def question_detail(request, question_slug):
     })
 
 
-
-
-def faculty_list(request):
-    faculties = Faculty.objects.all()
-    return render(request, 'questions/hierarchy.html', {
-        'faculties': faculties, 'level': 'faculty'
-    })
-
-def program_list(request, faculty_slug):
-    faculty = get_object_or_404(Faculty, slug=faculty_slug)
-    programs = faculty.programs.all()
-    return render(request, 'questions/hierarchy.html', {
-        'faculty': faculty, 'programs': programs, 'level': 'program'
-    })
-
-def course_list(request, program_slug):
-    program = get_object_or_404(Program, slug=program_slug)
-    courses = program.courses.all()
-    return render(request, 'questions/hierarchy.html', {
-        'program': program, 'courses': courses, 'level': 'course'
-    })
-
-def category_list(request, course_slug):
-    course = get_object_or_404(Course, slug=course_slug)
-    categories = course.categories.all()
-    return render(request, 'questions/hierarchy.html', {
-        'course': course, 'categories': categories, 'level': 'category'
-    })
-
-# Страница с вопросами конкретного предмета
-def subject_questions(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    questions = Questions.objects.filter(cat=category, is_published=True).select_related('author')
-    return render(request, 'questions/category_questions.html', {
-        'category': category, 'questions': questions
-    })
-
-
-
-def get_cascade_options(request):
-    """Возвращает JSON для зависимых списков"""
-    faculty_id = request.GET.get('faculty_id')
-    program_id = request.GET.get('program_id')
-    course_id = request.GET.get('course_id')
-
-    if faculty_id:
-        data = list(Program.objects.filter(faculty_id=faculty_id).values('id', 'name'))
-    elif program_id:
-        data = list(Course.objects.filter(program_id=program_id).values('id', 'name'))
-    elif course_id:
-        data = list(Category.objects.filter(course_id=course_id).values('id', 'name'))
-    else:
-        data = []
+@login_required
+def toggle_like(request, question_slug):  # ← было question_id
+    if request.method == 'POST':
+        # 🔍 Ищем вопрос по slug, а не по id
+        question = get_object_or_404(Question, slug=question_slug)
         
-    return JsonResponse(data, safe=False)
+        like, created = Like.objects.get_or_create(user=request.user, question=question)
+        if not created:
+            like.delete()
+            liked = False
+        else:
+            liked = True
+            
+        return JsonResponse({
+            'success': True,
+            'liked': liked,
+            'likes_count': question.likes.count()
+        })
+    return JsonResponse({'success': False}, status=400)
+#  УДАЛЕНЫ: faculty_list, program_list, course_list, category_list, subject_questions, get_cascade_options
+# Эти функции вызовут NameError, так как модели Faculty/Program/Course закомментированы в models.py
