@@ -8,7 +8,7 @@ from django.utils.text import slugify
 from pytils.translit import translify  # Для корректной кириллицы в slug
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.db.models import Count
+from django.db.models import Count, Q
 
 # Create your views here.
 def index(request):
@@ -152,5 +152,34 @@ def toggle_like(request, question_slug):  # ← было question_id
             'likes_count': question.likes.count()
         })
     return JsonResponse({'success': False}, status=400)
+
+
+
+
+def search_questions(request):
+    query = request.GET.get('q', '').strip()
+    
+    # Получаем ID лайков текущего пользователя (для синхронизации с карточками)
+    liked_ids = set()
+    if request.user.is_authenticated:
+        liked_ids = set(Like.objects.filter(user=request.user).values_list('question_id', flat=True))
+
+    if query:
+        # Поиск по заголовку ИЛИ тексту вопроса (без учёта регистра)
+        questions = Question.objects.filter(
+            Q(title__icontains=query) | Q(content__icontains=query),
+            is_published=True
+        ).select_related('author', 'subsubject__subject').annotate(
+            likes_count=Count('likes'),
+            answers_count=Count('answers')
+        ).order_by('-time_create')
+    else:
+        questions = Question.objects.none()
+
+    return render(request, 'questions/search_results.html', {
+        'questions': questions,
+        'query': query,
+        'liked_ids': liked_ids,
+    })
 #  УДАЛЕНЫ: faculty_list, program_list, course_list, category_list, subject_questions, get_cascade_options
 # Эти функции вызовут NameError, так как модели Faculty/Program/Course закомментированы в models.py

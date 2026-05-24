@@ -11,6 +11,7 @@ urlpatterns = [
     path('subsubject/<slug:subsubject_slug>/', views.subsubject_detail, name='subsubject_detail'),
     path('question/<slug:question_slug>/', views.question_detail, name='question'),
     path('like/<slug:question_slug>/', views.toggle_like, name='toggle_like'),
+    path('search/', views.search_questions, name='search'),
 ]    
     # path('faculties/', views.faculty_list, name='faculty_list'),
     # path('faculty/<slug:faculty_slug>/', views.program_list, name='program_list'),

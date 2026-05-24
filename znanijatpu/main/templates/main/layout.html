@@ -16,13 +16,26 @@
     <!-- 🔝 Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1030; height: 56px;">
         <div class="container-fluid">
-            <a href="{% url 'home' %}" class="d-flex align-items-center mb-4 text-decoration-none">
+            <a href="{% url 'home' %}" class="d-flex align-items-center text-decoration-none">
                 <img src="{% static 'main/img/logo_purple.jpg' %}" alt="Logo" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" class="me-2">
                 <span class="logo fw-bold fs-5">ZnaniaTPU</span>
             </a>
             <button class="navbar-toggler d-md-none me-2" type="button" id="sidebarToggle">
                 <i class="fa-solid fa-bars"></i>
             </button>
+
+           <form class="d-flex mx-auto my-2 my-lg-0" role="search" 
+                action="{% url 'questions:search' %}" method="GET" 
+                style="max-width: 450px; width: 100%;">
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-light border-end-0">
+                        <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                    </span>
+                    <input class="form-control border-start-0" type="search" name="q" 
+                        placeholder="Поиск..." value="{{ request.GET.q }}" aria-label="Search">
+                    <button class="btn btn-outline-secondary border-start-0" type="submit">Найти</button>
+                </div>
+            </form>
             
             <div class="d-flex align-items-center ms-auto">
                 {% if user.is_authenticated %}
@@ -83,34 +96,24 @@
         </ul>
     </aside>
     
-    <!-- 🔹 Основной контент -->
-    <main class="main-content pt-5 pt-md-3 px-3">
+    <main class="main-content flex-grow-1 pt-5 pt-md-3 px-3">
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="footer bg-light border-top py-4 mt-4">
-        <div class="container px-3 px-md-4 d-flex flex-column align-items-center">
-            
-            <div class="mb-3 text-center">
-                <span class="text-muted small">© {% now "Y" %} <strong>ZnaniaTPU</strong></span>
-            </div>
-            
-            <ul class="list-unstyled d-flex flex-wrap justify-content-center gap-3 mb-0">
-                <li>
-                    <a href="https://t.me/ТВОЙ_КАНАЛ" target="_blank" class="text-secondary text-decoration-none small fw-medium">
+    <footer class="footer w-100 py-4" style="background: #343a40; color: #fff;">
+        <div class="footer-inner px-3 px-md-4">
+            <div class="d-flex flex-column align-items-center">
+                <span class="mb-2 small">© {% now "Y" %} <strong>ZnaniaTPU</strong></span>
+                <div class="d-flex gap-3">
+                    <a href="https://t.me/znanijatpu" target="_blank" class="text-white-50 text-decoration-none small">
                         <i class="fab fa-telegram me-1"></i>Telegram
                     </a>
-                </li>
-                <li>
-                    <a href="https://vk.com/ТВОЯ_ГРУППА" target="_blank" class="text-secondary text-decoration-none small fw-medium">
+                    <a href="https://vk.com/ТВОЯ_ГРУППА" target="_blank" class="text-white-50 text-decoration-none small">
                         <i class="fab fa-vk me-1"></i>ВКонтакте
                     </a>
-                </li>
-                <li>
-                    <a href="{% url 'about' %}" class="text-secondary text-decoration-none small fw-medium">О проекте</a>
-                </li>
-            </ul>
-
+                    <a href="{% url 'about' %}" class="text-white-50 text-decoration-none small">О проекте</a>
+                </div>
+            </div>
         </div>
     </footer>
 
