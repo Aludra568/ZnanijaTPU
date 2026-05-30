@@ -1,0 +1,59 @@
+{% extends 'main/layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center mb-4">Регистрация</h2>
+            
+            <form method="post" class="register-form">
+        {% csrf_token %}
+        
+        <!-- Блок ошибок -->
+        {% if form.errors %}
+            <div class="errors">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>⚠️ {{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Поля формы -->
+        <div class="form-group">
+            {{ form.username.label_tag }}
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            {{ form.email.label_tag }}
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            {{ form.password1.label_tag }}
+            {{ form.password1 }}
+        </div>
+        <div class="form-group">
+            {{ form.password2.label_tag }}
+            {{ form.password2 }}
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            <i class="fa-solid fa-sign-in-alt"></i> Зарегистрироваться
+        </button>
+
+    </form>
+            <p class="login-link">Уже есть аккаунт?</p><p><a href="/users/login/">Войти</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- users/templates/users/register.html
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Зарегистрироваться</button>
+</form>
+<p>Уже есть аккаунт? <a href="/users/login/">Войти</a></p> -->

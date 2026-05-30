@@ -1,0 +1,17 @@
+{% extends 'main/layout.html' %}
+{% block title %}Подтверждение{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width: 450px;">
+    <h3 class="text-center mb-3">Введите код</h3>
+    <p class="text-center text-muted">Отправлен на <strong>{{ email }}</strong></p>
+    <form method="post" class="card p-4 shadow-sm">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Код из письма</label>
+            <input type="text" name="code" class="form-control text-center fs-4" maxlength="6" pattern="[0-9]{6}" placeholder="••••••" required>
+        </div>
+        <button type="submit" class="btn btn-success w-100">Подтвердить</button>
+    </form>
+    {% if messages %}{% for m in messages %}<div class="alert alert-{{ m.tags }} mt-3 small">{{ m }}</div>{% endfor %}{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'main/layout.html' %}
+{% block title %}Главная - ZnaniaTPU{% endblock %}
+
+{% block content %}
+    <div class="features">
+        <h1>Вопросы на сайте</h1>
+        {% if questions %}
+            {% for el in news %}
+                <div class="alert alert-warning">
+                    <h3>{{ questions.title }}</h3>
+                    <p>{{ questions.content }}</p>
+                    <a href="{% url 'news-detail' el.id %}" class="btn btn-warning">Читать детальнее</a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>У вас нет записей</p>
+        {% endif %}
+
+        {# Comment #}
+    </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'main/layout.html' %}
+{% block title %}Навигация - ZnaniaTPU{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px; margin: 0 auto;">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'questions:faculty_list' %}">Инженерные школы</a></li>
+            {% if faculty %}<li class="breadcrumb-item"><a href="{% url 'questions:program_list' faculty.slug %}">{{ faculty.name }}</a></li>{% endif %}
+            {% if program %}<li class="breadcrumb-item"><a href="{% url 'questions:course_list' program.slug %}">{{ program.name }}</a></li>{% endif %}
+            {% if course %}<li class="breadcrumb-item"><a href="{% url 'questions:category_list' course.slug %}">{{ course.name }}</a></li>{% endif %}
+        </ol>
+    </nav>
+
+    <h2 class="text-center mb-4 fw-bold">
+        {% if level == 'faculty' %}🏛 Выберите инженерную школу
+        {% elif level == 'program' %} Форма обучения: {{ faculty.name }}
+        {% elif level == 'course' %}📅 Курсы: {{ program.name }}
+        {% elif level == 'category' %}📚 Предметы: {{ course.name }}
+        {% endif %}
+    </h2>
+
+    <div class="row g-3 justify-content-center">
+        {% if level == 'faculty' %}
+            {% for f in faculties %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'questions:program_list' f.slug %}" class="card h-100 text-decoration-none text-dark border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center py-4">
+                        <i class="fa-solid fa-building-columns fa-2x text-primary mb-2"></i>
+                        <h5 class="card-title fw-semibold">{{ f.name }}</h5>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+
+        {% elif level == 'program' %}
+            {% for p in programs %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'questions:course_list' p.slug %}" class="card h-100 text-decoration-none text-dark border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center py-4">
+                        <i class="fa-solid fa-graduation-cap fa-2x text-success mb-2"></i>
+                        <h5 class="card-title fw-semibold">{{ p.name }}</h5>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+
+        {% elif level == 'course' %}
+            {% for c in courses %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'questions:category_list' c.slug %}" class="card h-100 text-decoration-none text-dark border-0 shadow-sm hover-lift">
+                    <div class="card-body text-center py-4">
+                        <span class="display-4 fw-bold text-primary">{{ c.number }}</span>
+                        <p class="text-muted mb-0 small">курс</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+
+        {% elif level == 'category' %}
+            {% for cat in categories %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'questions:category' cat.slug %}" class="card h-100 text-decoration-none text-dark border-0 shadow-sm hover-lift">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="fa-solid fa-book fa-lg text-info me-2"></i>
+                            <h5 class="card-title fw-semibold mb-0">{{ cat.name }}</h5>
+                        </div>
+                        <small class="text-muted">Вопросов: {{ cat.questions.count }}</small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.hover-lift { transition: transform 0.2s, box-shadow 0.2s; }
+.hover-lift:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important; }
+</style>
+{% endblock %}

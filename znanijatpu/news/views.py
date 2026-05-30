@@ -7,3 +7,4 @@ def index(request):
 
 def news(request, question_id):
     return HttpResponse(f'<h1>id: {question_id} </h1>')
+

@@ -1,0 +1,57 @@
+{% extends 'main/layout.html' %}
+{% block title %}Поиск{% if query %}: {{ query }}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Результаты поиска{% if query %}: "{{ query }}"{% endif %}</h2>
+
+    {% if not query %}
+        <p class="text-muted">Введите запрос в строку поиска сверху.</p>
+    {% elif not questions %}
+        <div class="alert alert-info text-center py-4">
+            <i class="fa-regular fa-face-frown fa-2x mb-2 d-block text-secondary"></i>
+            Ничего не найдено. Попробуйте изменить запрос или проверить орфографию.
+        </div>
+    {% else %}
+        <p class="text-muted mb-3">Найдено вопросов: {{ questions.count }}</p>
+        
+        {% for question in questions %}
+        <div class="card mb-3 shadow-sm position-relative">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <span class="badge bg-primary">{{ question.subsubject.subject.name }}</span>
+                    <small class="text-muted">{{ question.time_create|timesince }} назад</small>
+                </div>
+                
+                <h5 class="card-title mb-2 text-break">
+                    <a href="{{ question.get_absolute_url }}" class="stretched-link text-decoration-none text-dark">
+                        {{ question.title }}
+                    </a>
+                </h5>
+                
+                <p class="card-text text-muted small mb-2">{{ question.content|truncatewords:20 }}</p>
+                
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+                    <div class="d-flex gap-3 align-items-center">
+                        <!-- Лайки -->
+                        <span class="stat-item like-btn position-relative" style="cursor:pointer;z-index:10;"
+                              data-url="{% url 'questions:toggle_like' question.slug %}"
+                              data-liked="{% if request.user.is_authenticated and question.id in liked_ids %}true{% else %}false{% endif %}">
+                            <i class="{% if request.user.is_authenticated and question.id in liked_ids %}fa-solid{% else %}fa-regular{% endif %} fa-thumbs-up me-1"></i>
+                            <span class="likes-count">{{ question.likes_count|default:0 }}</span>
+                        </span>
+                        <!-- Ответы -->
+                        <span class="stat-item text-muted">
+                            <i class="fa-regular fa-comment me-1"></i> {{ question.answers_count|default:0 }}
+                        </span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 text-nowrap">
+                        <small class="text-muted">👤 {{ question.author.username|default:"Аноним" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

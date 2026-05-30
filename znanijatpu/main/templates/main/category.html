@@ -1,0 +1,27 @@
+{% extends 'main/layout.html' %}
+{% block title %}{{ category.name }} - ZnaniaTPU{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">
+        <i class="fa-solid fa-book me-2"></i>{{ category.name }}
+    </h2>
+
+    {% for question in questions %}
+        <div class="card mb-3 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <a href="{{ question.get_absolute_url }}" class="text-decoration-none text-dark">
+                        {{ question.title }}
+                    </a>
+                </h5>
+                <p class="text-muted">{{ question.content|truncatewords:25 }}</p>
+                <small class="text-muted">Автор: {{ question.author.username }}</small>
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-info">
+            В категории "{{ category.name }}" пока нет вопросов.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
