@@ -38,6 +38,8 @@ body {
     border-right: 1px solid #dee2e6;
     overflow-y: auto;
     z-index: 900;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .sidebar ul { list-style: none; padding-left: 0; }
