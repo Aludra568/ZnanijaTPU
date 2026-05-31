@@ -18,13 +18,13 @@
         <div class="container-fluid">
             <a href="{% url 'home' %}" class="d-flex align-items-center text-decoration-none">
                 <img src="{% static 'main/img/logo_purple.jpg' %}" alt="Logo" style="width: 40px; height: 40px; object-fit: cover; border-radius: 8px;" class="me-2">
-                <span class="logo fw-bold fs-5">ZnaniaTPU</span>
+                <span class="logo fw-bold fs-4" style="color: #8a2be2;">ZnaniaTPU</span>
             </a>
             <button class="navbar-toggler d-md-none me-2" type="button" id="sidebarToggle">
                 <i class="fa-solid fa-bars"></i>
             </button>
 
-           <form class="d-flex mx-auto my-2 my-lg-0" role="search" 
+           <form class="d-flex mx-auto my-2 my-lg-0 search-center-desktop" role="search" 
                 action="{% url 'questions:search' %}" method="GET" 
                 style="max-width: 450px; width: 100%;">
                 <div class="input-group input-group-sm">
@@ -39,28 +39,27 @@
             
             <div class="d-flex align-items-center ms-auto">
                 {% if user.is_authenticated %}
-                    <!-- ✅ users: оставлен, если в users/urls.py есть app_name='users' -->
-                    <a href="{% url 'users:profile' %}" class="btn btn-outline-success me-2">
+                    <a href="{% url 'users:profile' %}" class="btn btn-purple-outline me-2">
                         <i class="fa-solid fa-user"></i> {{ user.username }}
                     </a>
-                    <!-- ✅ Убрано questions: → просто 'create' -->
-                    <a href="{% url 'questions:create' %}" class="btn btn-info me-2 text-white">
+                    <a href="{% url 'questions:create' %}" class="btn btn-purple-main me-2">
                         <i class="fas fa-plus-circle"></i> <span class="d-none d-sm-inline">Задать вопрос</span>
                     </a>
-                    <form action="{% url 'users:logout' %}" method="post" class="m-0">
+                    <form action="{% url 'users:logout' %}" method="post" class="m-0 w-auto">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-outline-danger btn-sm">
                             <i class="fa-solid fa-sign-out-alt"></i>
                         </button>
                     </form>
                 {% else %}
-                    <a href="{% url 'users:login' %}" class="btn btn-outline-primary me-2 btn-sm">Вход</a>
-                    <a href="{% url 'users:register' %}" class="btn btn-primary btn-sm">Регистрация</a>
+                    <a href="{% url 'users:login' %}" class="btn btn-purple-outline me-2 btn-sm">Вход</a>
+                    <a href="{% url 'users:register' %}" class="btn btn-purple-main btn-sm">Регистрация</a>
                 {% endif %}
             </div>
         </div>
     </nav>
     
+    <div class="main-wrapper">
     <!-- 🔽 Левый сайдбар -->
     <aside class="sidebar">
         
@@ -96,11 +95,22 @@
         </ul>
     </aside>
     
-    <main class="main-content flex-grow-1 pt-5 pt-md-3 px-3">
+    <main class="main-content flex-grow-1 pt-3 px-1">
         {% block content %}{% endblock %}
     </main>
+    </div>
 
-    <footer class="footer w-100 py-4" style="background: #343a40; color: #fff;">
+    <script>
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('show');
+        });
+        document.querySelector('.main-content')?.addEventListener('click', function() {
+            if (window.innerWidth < 768) {
+                document.querySelector('.sidebar').classList.remove('show');
+            }
+        });
+    </script>
+<footer class="footer w-100 py-4" style="background: #343a40; color: #fff; position: relative; z-index: 1050; margin-left: 0 !important; margin-right: 0 !important; left: 0;">
         <div class="footer-inner px-3 px-md-4">
             <div class="d-flex flex-column align-items-center">
                 <span class="mb-2 small">© {% now "Y" %} <strong>ZnaniaTPU</strong></span>
@@ -116,16 +126,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-        document.querySelector('.main-content')?.addEventListener('click', function() {
-            if (window.innerWidth < 768) {
-                document.querySelector('.sidebar').classList.remove('show');
-            }
-        });
-    </script>
 </body>
 </html>

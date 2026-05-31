@@ -51,7 +51,6 @@ def create(request):
     })
 
 def home(request):
-    # ✅ ИСПРАВЛЕНО: cat → subsubject
     questions = Question.objects.filter(is_published=True) \
         .select_related('subsubject__subject', 'author') \
         .order_by('-time_create')
@@ -63,7 +62,6 @@ def home(request):
 def category(request, cat_slug):
     subject = get_object_or_404(Subject, slug=cat_slug)
     
-    # ✅ ИСПРАВЛЕНО: фильтрация через подпредмет
     questions = Question.objects.filter(
         subsubject__subject=subject, 
         is_published=True
@@ -134,18 +132,15 @@ def question_detail(request, question_slug):
 
 
 @login_required
-def toggle_like(request, question_slug):  # ← было question_id
+def toggle_like(request, question_slug): 
     if request.method == 'POST':
-        # 🔍 Ищем вопрос по slug, а не по id
         question = get_object_or_404(Question, slug=question_slug)
-        
         like, created = Like.objects.get_or_create(user=request.user, question=question)
         if not created:
             like.delete()
             liked = False
         else:
             liked = True
-            
         return JsonResponse({
             'success': True,
             'liked': liked,

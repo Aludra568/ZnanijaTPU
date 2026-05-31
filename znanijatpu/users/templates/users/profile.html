@@ -25,21 +25,21 @@
 
     <!-- Содержимое вкладок -->
     <div class="tab-content">
-        <!-- 🟦 Вопросы -->
+        <!-- Вопросы -->
         <div class="tab-pane fade show active" id="questions-content" role="tabpanel">
-            {% for q in user_questions %}
+            {% for question in user_questions %}
                 <div class="card mb-2 border-0 shadow-sm">
                     <div class="card-body d-flex justify-content-between align-items-center">
                         <div>
                             <h5 class="card-title mb-1">
-                                <a href="{{ question.get_absolute_url }}" class="text-decoration-none text-dark">{{ q.title }}</a>
+                                <a href="{{ question.get_absolute_url }}" class="text-decoration-none text-dark">{{ question.title }}</a>
                             </h5>
                             <small class="text-muted">
-                                📚 {{ q.subsubject.subject.name }} → {{ q.subsubject.name }} • {{ q.time_create|date:"d.m.Y" }}
+                                📚 {{ question.subsubject.subject.name }} → {{ question.subsubject.name }} • {{ question.time_create|date:"d.m.Y" }}
                             </small>
                         </div>
                         <span class="badge bg-{% if question.is_published %}success{% else %}secondary{% endif %}">
-                            {% if q.is_published %}Опубликован{% else %}Черновик{% endif %}
+                            {% if question.is_published %}Опубликован{% else %}Черновик{% endif %}
                         </span>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
             {% endfor %}
         </div>
 
-        <!-- 🟩 Ответы -->
+        <!-- Ответы -->
         <div class="tab-pane fade" id="answers-content" role="tabpanel">
             {% for a in user_answers %}
                 <div class="card mb-2 border-0 shadow-sm">
@@ -56,7 +56,11 @@
                         <p class="mb-1">{{ a.content|truncatewords:18 }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <small class="text-muted">
-                                💬 Вопрос: <a href="{{ answer.question.get_absolute_url }}" class="text-decoration-none">{{ a.question.title|truncatechars:40 }}</a>
+                                💬 Вопрос: 
+                                <!-- ✅ Исправлено: answer → a -->
+                                <a href="{{ a.question.get_absolute_url }}" class="text-decoration-none">
+                                    {{ a.question.title|truncatechars:40 }}
+                                </a>
                             </small>
                             <small class="text-muted">{{ a.time_create|date:"d.m.Y" }}</small>
                         </div>

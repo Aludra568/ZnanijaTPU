@@ -45,25 +45,6 @@ class Question(models.Model):
         ]
 
 
-# class Faculty(models.Model):
-#     name = models.CharField(max_length=150, verbose_name='Факультет')
-#     slug = models.SlugField(unique=True, verbose_name='URL-метка')
-#     class Meta:
-#         verbose_name = 'Факультет'
-#         verbose_name_plural = 'Факультеты'
-#     def __str__(self): return self.name
-
-# class Program(models.Model):
-#     name = models.CharField(max_length=100, verbose_name='Форма обучения')
-#     slug = models.SlugField(unique=True)
-#     faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name='programs', verbose_name='Факультет')
-#     class Meta:
-#         verbose_name = 'Форма обучения'
-#         verbose_name_plural = 'Формы обучения'
-#     def __str__(self): return self.name
-
-
-
 class Subject(models.Model):
     name = models.CharField(max_length=100, db_index=True, verbose_name='Предмет')
     slug = models.SlugField(max_length=100, unique=True, db_index=True)

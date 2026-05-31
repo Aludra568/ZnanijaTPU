@@ -38,6 +38,8 @@ body {
     border-right: 1px solid #dee2e6;
     overflow-y: auto;
     z-index: 900;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .sidebar ul { list-style: none; padding-left: 0; }
@@ -50,22 +52,18 @@ body {
     border-radius: 6px;
     transition: background 0.2s;
 }
-.sidebar a:hover { background: #e9ecef; color: #0d6efd; }
-.sidebar .active { background: #0d6efd; color: white !important; }
 
-.main-content {
-    margin-left: 280px;
-    margin-top: 56px;
-    padding: 1.5rem;
+.sidebar a:hover { 
+    background: #e9ecef; 
+    color: #9811f3; 
+}
+.sidebar .active { 
+    background: #9811f3; 
+    color: white !important; 
 }
 
-.container {
-    display: grid;
-    grid-template-columns: 250px 1fr;
-    gap: 20px;
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+.main-content {
+    padding: 1.5rem;
 }
 
 
@@ -78,7 +76,7 @@ body {
     color: #666;
     list-style: none;
 }
-.sidebar li.active { background-color: #f3e8ff; color: #8a2be2; font-weight: bold; }
+.sidebar li.active { background-color: #f3e8ff; color: #9811f3; font-weight: bold; }
 .sidebar li:hover:not(.active) { background-color: #eee; }
 
 /* Подменю */
@@ -102,7 +100,7 @@ body {
     transition: 0.3s;
 }
 .has-submenu div:hover { background-color: #eee; }
-.submenu li.active-sub { color: #8a2be2; font-weight: 600; }
+.submenu li.active-sub { color: #9811f3; font-weight: 600; }
 
 /* Карточки вопросов */
 .question-card {
@@ -116,9 +114,16 @@ body {
 .card-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
 
 /* Бейджи */
+.bg-purple {
+    background-color: rgb(246, 232, 248) !important; /* Цвет фона */
+    color: rgb(174, 93, 248) !important;            /* Цвет текста (белый) */
+    font-weight: 500;                     /* Можно добавить жирности, если нужно */
+    padding: 0.35em 0.65em;               /* Отступы внутри бейджа */
+    border-radius: 0.25rem;               /* Скругление углов */
+}
 .badge { padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
-.math { background: #f3e8ff; color: #8a2be2; }
-.physics { background: #e0f2fe; color: #0284c7; }
+.math { background: #f3e8ff; color: #9811f3; }
+.physics { background: #e0f2fe; color: #9811f3; }
 .default-badge { background: #eee; color: #666; }
 
 /* Формы и поля */
@@ -163,7 +168,7 @@ body {
     background: #f1f1f1;
     outline: none;
 }
-.btn-ask { background-color: #8a2be2; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn-ask { background-color: #9811f3; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
 .btn-login { background-color: transparent; border: 1px solid #ddd; padding: 8px 20px; border-radius: 8px; cursor: pointer; }
 
 /* Авторизация */
@@ -172,7 +177,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #8a2be2, #4b0082);
+    background: linear-gradient(135deg, #9811f3, #4b0082);
 }
 .auth-card {
     background: white;
@@ -258,11 +263,6 @@ form {
     overflow-y: auto;
   }
   .sidebar.show { transform: translateX(0); }
-  .main-content {
-    margin-left: 0 !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
 }
 
 @media (min-width: 768px) {
@@ -274,7 +274,7 @@ form {
     overflow-y: auto;
   }
   .main-content {
-    margin-left: 280px;
+    margin-left: 0px;
   }
 }
 
@@ -300,4 +300,134 @@ form {
         padding-left: 1rem !important;
         padding-right: 1rem !important;
     }
+}
+
+   /*ФИОЛЕТОВЫЙ СТИЛЬ КНОПОК И ИДЕАЛЬНОЕ ЦЕНТРИРОВАНИЕ ШАПКИ*/
+/* Стили кнопок под новый дизайн */
+.btn-purple-main {
+    background-color: #9811f3 !important;
+    border-color: #9811f3 !important;
+    color: #ffffff !important;
+    border-radius: 20px !important; /* Округлые аккуратные кнопки из макета */
+    font-weight: 600 !important;
+    padding: 6px 18px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+.btn-purple-main:hover {
+    background-color: #9811f3 !important;
+    border-color: #9811f3 !important;
+    box-shadow: 0 4px 10px rgba(94, 23, 235, 0.25) !important;
+}
+
+.btn-purple-outline {
+    background-color: transparent !important;
+    border-color: #9811f3 !important;
+    color: #9811f3 !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    padding: 6px 18px !important;
+    transition: all 0.2s ease-in-out !important;
+}
+.btn-purple-outline:hover {
+    background-color: #9811f3 !important;
+    color: #ffffff !important;
+}
+
+/*Выравнивание элементов*/
+@media (min-width: 992px) {
+    /* Ограничиваем контейнер и фиксируем relative */
+    .navbar .container-fluid {
+        position: relative !important;
+        display: flex !important;
+        align-items: center !important;
+        height: 100% !important;
+    }
+
+    /* Строка поиска принудительно встает в геометрический центр экрана и расширяется */
+    .search-center-desktop {
+        position: absolute !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 650px !important;
+        margin: 0 !important;
+        z-index: 5 !important;
+    }
+
+    /* Скругление краев самого инпута*/
+    .search-center-desktop .input-group {
+        border-radius: 20px !important;
+        overflow: hidden !important;
+    }
+
+    /* Блок кнопок принудительно улетает в самый правый угол и встает вровень с поиском */
+    .navbar .container-fluid > .ms-auto {
+        margin-left: auto !important;
+        display: flex !important;
+        align-items: center !important;
+        z-index: 10 !important;
+        white-space: nowrap !important; /* Кнопки никогда не упадут на вторую строку */
+    }
+}
+
+/*ЭФФЕКТ МАТОВОГО СТЕКЛА ДЛЯ NAVBAR*/
+.navbar {
+    background-color: rgba(255, 255, 255, 0.05) !important; 
+    backdrop-filter: blur(12px) !important; 
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/*ИСПРАВЛЕНИЕ ОБВОДКИ И СКРУГЛЕНИЯ ПОИСКОВОЙ СТРОКИ*/
+.search-center-desktop .input-group :first-child,
+.navbar form .input-group :first-child {
+    border-top-left-radius: 20px !important;
+    border-bottom-left-radius: 20px !important;
+}
+.search-center-desktop .input-group .btn,
+.navbar form .input-group .btn {
+    border-top-right-radius: 20px !important;
+    border-bottom-right-radius: 20px !important;
+    border-left: 1px solid #dee2e6 !important;
+}
+.navbar form .input-group {
+    border-radius: 20px;
+    background-color: #fff;
+}
+.navbar form .form-control {
+    border-radius: 0 !important;
+}
+
+/*КНОПКИ "НАЙТИ"*/
+.navbar form .input-group .btn {
+    color: #9811f3 !important;
+    font-weight: 700 !important;
+}
+.navbar form .input-group .btn:hover {
+    color: #ffffff !important; 
+    background-color: #9811f3 !important;
+    border-color: #9811f3 !important;
+}
+
+/* Переводим всю страницу в режим Flexbox-колонки */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Растягивает body на всю высоту экрана */
+    margin: 0;
+}
+
+/* Заставляем основной блок занимать всё свободное место, 
+   выталкивая футер в самый низ */
+.main-wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    /* Если у тебя фиксированный navbar (height: 56px), 
+       делаем отступ сверху, чтобы контент не залезал под него */
+    padding-top: 56px; 
+}
+
+/* Наш футер всегда будет внизу и во всю ширину */
+.footer {
+    flex-shrink: 0;
+    width: 100%;
 }

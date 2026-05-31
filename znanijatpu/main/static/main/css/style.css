@@ -1,0 +1,170 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* Авторизация */
+.auth-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #8a2be2, #4b0082);
+}
+
+.auth-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 350px;
+    text-align: center;
+}
+
+.auth-logo {
+    height: 60px;
+    margin-bottom: 20px;
+}
+
+.error-text { color: red; font-size: 0.8rem; margin-top: 10px; }
+
+/* Шапка */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 40px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo img { height: 40px; cursor: pointer; }
+
+.search-bar { flex-grow: 0.6; position: relative; margin: 0 20px; }
+.search-bar i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; }
+.search-bar input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    background: #f1f1f1;
+    outline: none;
+}
+
+.btn-ask { background-color: #8a2be2; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.btn-login { background-color: transparent; border: 1px solid #ddd; padding: 8px 20px; border-radius: 8px; cursor: pointer; }
+
+/* Сетка контента */
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* Боковое меню */
+.sidebar li {
+    padding: 12px 20px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 10px;
+    color: #666;
+    list-style: none;
+}
+
+.sidebar li.active { background-color: #f3e8ff; color: #8a2be2; font-weight: bold; }
+.sidebar li:hover:not(.active) { background-color: #eee; }
+
+/* Стили для подразделов */
+.submenu {
+    list-style: none;
+    padding-left: 25px;
+    display: none; 
+    margin-top: 5px;
+    background: #fafafa;
+}
+
+.submenu li {
+    padding: 8px 15px !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 2px;
+}
+
+.has-submenu div {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 10px;
+    color: #666;
+    transition: 0.3s;
+}
+
+.has-submenu div:hover {
+    background-color: #eee;
+}
+
+.submenu li.active-sub {
+    color: #8a2be2;
+    font-weight: 600;
+}
+
+/* Карточки */
+.question-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.card-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.badge { padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: bold; }
+.math { background: #f3e8ff; color: #8a2be2; }
+.physics { background: #e0f2fe; color: #0284c7; }
+.default-badge { background: #eee; color: #666; }
+
+.modern-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Файлы */
+.file-upload { margin-top: 10px; }
+.file-upload label {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #f0f0f0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #555;
+    transition: 0.3s;
+}
+.file-upload label:hover { background: #e0e0e0; }
+.file-name-display { font-size: 0.85rem; color: #8a2be2; margin-left: 10px; }
+
+.attachment-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #8a2be2;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.attachment-link:hover { text-decoration: underline; }
+

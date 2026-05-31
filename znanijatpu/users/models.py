@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 
 class VerificationCode(models.Model):
     email = models.EmailField(unique=True, verbose_name='Email')
@@ -8,7 +9,9 @@ class VerificationCode(models.Model):
 
     @property
     def is_expired(self):
-        return (timezone.now() - self.created_at).total_seconds() > 600
+        # return (timezone.now() - self.created_at).total_seconds() > 600
+        return timezone.now() > self.created_at + timedelta(minutes=10)
+
 
     class Meta:
         verbose_name = 'Код подтверждения'

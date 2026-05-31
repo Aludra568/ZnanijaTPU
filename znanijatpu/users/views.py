@@ -127,15 +127,17 @@ from .forms import RegisterForm
 from .models import VerificationCode
 
 def _send_code(email):
-    """Генерация и отправка кода (используется везде)"""
     code = str(random.randint(100000, 999999))
-    VerificationCode.objects.update_or_create(email=email, defaults={'code': code})
+    VerificationCode.objects.update_or_create(
+        email=email, 
+        defaults={'code': code, 'created_at': timezone.now()}
+    )
     send_mail(
         'Код подтверждения ZnaniaTPU',
         f'Ваш код: {code}\nДействует 10 минут.',
         settings.DEFAULT_FROM_EMAIL,
         [email],
-        fail_silently=True  # ✅ Никогда не ломает сайт
+        fail_silently=True  
     )
     return code
 

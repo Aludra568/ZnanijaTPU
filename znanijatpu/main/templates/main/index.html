@@ -3,7 +3,7 @@
 {% block title %}Главная - ZnaniaTPU{% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
+<div class="container-fluid ps-0 py-4">
     <h1 class="mb-4">Последние вопросы</h1>
 
     {% if not questions %}
@@ -24,7 +24,7 @@
                 
                 <!-- Верхняя часть: категория + время -->
                 <div class="d-flex justify-content-between align-items-start mb-3">
-                    <span class="badge bg-primary mb-2">{{ question.subsubject.subject.name }}</span>
+                    <span class="badge bg-purple mb-2">{{ question.subsubject.subject.name }}</span>
                     <small class="text-muted">{{ question.time_create|timesince }} назад</small>
                 </div>
 
