@@ -79,6 +79,12 @@ body {
 .sidebar li.active { background-color: #f3e8ff; color: #9811f3; font-weight: bold; }
 .sidebar li:hover:not(.active) { background-color: #eee; }
 
+.sidebar a.no-hover-color:hover {
+    background: #9811f3 !important;  
+    color: #f3e8ff !important;              
+}
+
+
 /* Подменю */
 .submenu {
     list-style: none;

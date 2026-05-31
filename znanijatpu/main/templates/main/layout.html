@@ -69,7 +69,8 @@
         </h6>
         <ul class="mb-4">
             <li>
-                <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                <a href="{% url 'home' %}" 
+                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %} no-hover-color">
                     <i class="fa-solid fa-house me-2"></i>Главная
                 </a>
             </li>
